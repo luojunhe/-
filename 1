@@ -1,0 +1,551 @@
+#include <reg51.h>
+#include <intrins.h>
+#define uchar unsigned char
+#define uint unsigned int
+
+uchar xdata  led _at_ 0x8004;
+uchar xdata  cow _at_ 0x8002;
+uchar xdata  row _at_ 0x8001;
+
+uchar code table1[]={0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80};
+uchar code table2[]={0x80,0x40,0x20,0x10,0x08,0x04,0x02,0x01};
+uchar code table3[]={0x81,0x42,0x24,0x18};
+uchar code table4[]={0x18,0x24,0x42,0x81};
+uchar code table5[]={0xaa,0x55};
+uchar code table6[]={0x55,0xaa};
+uchar code table7[]={0x99,0x66};
+uchar code table8[]={0x66,0x99};
+uchar code ledtable[] = {0x3f, 0x06, 0x5b, 0x4f, 0x66, 0x6d, 0x7d, 0x07, 0x7f, 0x6f};
+
+uchar _key;
+uint i;
+uint a;
+uint b=0;
+uint lei=0;
+uint bz=0;
+uint jishu2=0;
+uint q=0;
+uint w=0;
+uint e=0;
+uint x;
+uint b;
+
+void _delay_ms(uint t);
+void display();
+uchar keyScan(void);
+void fangshi1();
+	void fangshi2();
+		void fangshi3();
+			void fangshi4();
+				void fangshi5();
+					void fangshi6();
+						void fangshi7();
+							void fangshi8();
+void init();
+void ledtime(uint led);
+
+void _delay_ms(uint t)      
+{
+	uint i, j;
+	for (i = 0; i < t; i++)
+		for (j = 0; j < 110; j++);
+			
+}
+
+void display()
+{
+	cow = 0x01;
+	led = ledtable[lei];          //数码管上的显示
+	_delay_ms(1);
+	led = 0x00;
+	
+	cow = 0x20;
+	led = ledtable[q];          //数码管上的显示
+	_delay_ms(1);
+	led = 0x00;
+	
+	cow = 0x10;
+	led = ledtable[w];          //数码管上的显示
+	_delay_ms(1);
+	led = 0x00;
+}
+
+uchar keyScan(void)  
+{
+	cow = 0x00;
+	if (row != 0x0f)                  
+	{
+		uchar key = 0x00;
+		_delay_ms(10);
+		cow = 0x00;                          
+		switch (row)
+		{
+		case 0x07:
+			key = 0x40;                  
+			break;
+		case 0x0b:
+			key = 0x30;
+			break;
+		case 0x0d:
+			key = 0x20;
+			break;
+		case 0x0e:
+			key = 0x10;
+			break;
+		default:
+			return key;
+		}
+    cow = 0x1f; 
+		if (row != 0x0f)
+			key = key + 0x01;
+		_delay_ms(1);
+
+		cow = 0x2f; 
+		if (row != 0x0f)
+			key = key + 0x02;
+		_delay_ms(1);
+
+		cow = 0x37; 
+		if (row != 0x0f)
+			key = key + 0x03;
+		_delay_ms(1);
+
+		cow = 0x3b; 
+		if (row != 0x0f)
+			key = key + 0x04;
+		_delay_ms(1);
+		
+		cow = 0x3d;
+		if (row != 0x0f)
+			key = key + 0x05;
+		_delay_ms(1);
+
+		cow = 0x3e; 
+		if (row != 0x0f)
+			key = key + 0x06;
+		_delay_ms(1);
+
+		cow = 0x00;
+		_delay_ms(1);
+
+		while (row != 0x0f)
+			_delay_ms(10);
+		return key;
+
+
+	}
+	return 0x00;
+}
+
+ void fangshi1()
+ {
+	   	for(a=0;a<8;a++)
+			  {
+					P1=table1[a];
+					_delay_ms(500);
+			  }
+ }
+void fangshi2()
+{
+	for(a=0;a<8;a++)
+			  {
+					P1=table2[a];
+					_delay_ms(500);
+			  }
+}
+void fangshi3()	 
+{
+	for(a=0;a<4;a++)
+			  {
+					P1=table3[a];
+					_delay_ms(500);
+			  }
+			  }
+void fangshi4()
+{
+	for(a=0;a<4;a++)
+			  {
+					P1=table4[a];
+					_delay_ms(500);
+			  }
+}
+void fangshi5()
+{
+	for(a=0;a<2;a++)
+			  {
+					P1=table5[a];
+					_delay_ms(500);
+			  }
+}
+void fangshi6()
+{
+	for(a=0;a<2;a++)
+			  {
+					P1=table6[a];
+					_delay_ms(500);
+			  }
+}
+void fangshi7()
+{
+	for(a=0;a<2;a++)
+			  {
+					P1=table7[a];
+					_delay_ms(500);
+			  }
+}
+void fangshi8()
+{
+	for(a=0;a<2;a++)
+			  {
+					P1=table8[a];
+					_delay_ms(500);
+			  }
+}
+
+
+
+void init()
+{
+  TMOD = 0x01;
+  ET0 =1;
+  EA = 1;
+  TH0 = (65536 - 50000) / 256;
+	TL0 = (65536 - 50000) % 256;
+}
+
+
+	  
+
+ 
+
+void ledtime(uint led)
+{
+	switch(led)
+	{
+		    case 0:
+			  P1=0x00;
+	   	    break;
+			case 1:	
+			fangshi1();		
+			break;
+			case 2:
+			fangshi2();	
+			break;
+			case 3:
+			fangshi3();	
+			break;
+			case 4:
+			fangshi4();	
+			break;
+			case 5:
+			fangshi5();	
+			break;
+			case 6:
+			fangshi6();	
+			break;
+			case 7:
+			fangshi7();	
+			break;
+			case 8:
+			fangshi8();	
+			break;
+			case 9:
+			  while(1)
+			  {
+			    while(1)
+            {               
+	            display();  
+							_key =keyScan();
+				        if(_key==0x21)
+	               {
+	                x=1;
+								   	  if(q==0)
+				             {
+				     		      q=x;
+											 continue;
+				               }
+				               if(q!=0&&w==0)
+				              {
+				      	      w=x;
+												continue;
+				              } 
+				              if(q!=0&&w!=0&&e==0)
+				               {
+			     		         	e=x;
+			      	         } 
+											 continue;
+	                }
+             	  if(_key==0x22)
+             	  {
+              	  x=2;
+									 if(q==0)
+				             {
+				     		      q=x;
+											 continue;
+				               }
+				               if(q!=0&&w==0)
+				              {
+				      	      w=x;
+												continue;
+				              } 
+				              if(q!=0&&w!=0&&e==0)
+				               {
+			     		         	e=x;
+			      	         } 
+											 continue;
+                }
+	              if(_key==0x23)
+	              {
+	                x=3;
+									 if(q==0)
+				             {
+				     		      q=x;
+											 continue;
+				               }
+				               if(q!=0&&w==0)
+				              {
+				      	      w=x;
+												continue;
+				              } 
+				              if(q!=0&&w!=0&&e==0)
+				               {
+			     		         	e=x;
+			      	         } 
+											 continue;
+             	  }
+            	  if(_key==0x31)
+             	  {
+             	  x=4;
+									 if(q==0)
+				             {
+				     		      q=x;
+				               }
+				               if(q!=0&&w==0)
+				              {
+				      	      w=x;
+				              } 
+				              if(q!=0&&w!=0&&e==0)
+				               {
+			     		         	e=x;
+			      	         } 
+											 continue;
+	                }
+	              if(_key==0x32)
+              	  {
+             	  x=5;
+										 if(q==0)
+				             {
+				     		      q=x;
+											 continue;
+				               }
+				               if(q!=0&&w==0)
+				              {
+				      	      w=x;
+												continue;
+				              } 
+				              if(q!=0&&w!=0&&e==0)
+				               {
+			     		         	e=x;
+			      	         } 
+											 continue;
+             	  }
+             	  if(_key==0x33)
+	              {
+             	  x=6;
+									 if(q==0)
+				             {
+				     		      q=x;
+											 continue;
+				               }
+				               if(q!=0&&w==0)
+				              {
+				      	      w=x;
+												continue;
+				              } 
+				              if(q!=0&&w!=0&&e==0)
+				               {
+			     		         	e=x;
+			      	         } 
+											 continue;
+	               }
+             	  if(_key==0x41)
+             	  {
+            	  x=7;
+									 if(q==0)
+				             {
+				     		      q=x;
+											 continue;
+				               }
+				               if(q!=0&&w==0)
+				              {
+				      	      w=x;
+												continue;
+				              } 
+				              if(q!=0&&w!=0&&e==0)
+				               {
+			     		         	e=x;
+			      	         } 
+											 continue;
+	              }
+               	if(_key==0x42)
+             	  {
+            	      x=8;
+									 if(q==0)
+				             {
+				     		      q=x;
+											 continue;
+				               }
+				               if(q!=0&&w==0)
+				              {
+				      	      w=x;
+												continue;
+				              } 
+				              if(q!=0&&w!=0&&e==0)
+				               {
+			     		         	e=x;
+			      	         } 
+											 continue;
+	              }
+								if(_key==0x11)
+								{
+									q=0;
+									continue;
+								}
+								if(_key==0x12)
+								{
+									w=0;
+								}
+				        if(e==0)
+								{
+									continue;
+								}
+								if(q!=0&&w!=0&&e!=0)
+								{
+									break;
+								}
+							}		   
+				    		for(b=0;b<e;b++)
+                   	{
+                 	 switch(q)
+              	 {
+							  		 case 1: fangshi1();	break;
+		                	case 2:fangshi2();	break;
+		                	case 3:fangshi3();	break;
+		                	case 4:fangshi4();	break;
+	                		case 5:fangshi5();	break;	
+	                 		case 6:fangshi6();	break;
+	                		case 7:fangshi7();	break;
+	                 		case 8:fangshi8();	break;
+	               }
+	                switch(w)
+	               {
+	                    case 1:	fangshi1();		break;
+		                	case 2:fangshi2();	break;
+	                		case 3:fangshi3();	break;
+	                 		case 4:fangshi4();	break;
+		                	case 5:fangshi5();	break;
+	                 		case 6:fangshi6();	break;
+	                 		case 7:fangshi7();	break;
+	                 		case 8:fangshi8();	break;
+                 }
+                 	}
+									q=0;
+									w=0;
+									e=0;
+									lei=0;
+									break;	
+					     
+	         }
+    } 
+}
+ 
+
+void main(void)
+{
+  init();
+	while(1)
+	{
+    _key =keyScan();
+	  if(_key ==0x35)
+	  {
+       	bz=1;
+	    	TR0=0;
+
+  	}
+		if (_key==0x25)
+		{
+			bz=0;
+			TR0=0;
+			lei=0;
+	
+		}
+		if (_key == 0x21)
+		{
+			lei=1;
+
+		}
+		if (_key == 0x22)
+		{
+			lei=2;
+	
+		}
+		if (_key == 0x23)
+		{
+			lei=3;
+
+		}
+		if (_key == 0x31)
+		{
+			lei=4;
+
+		}
+		if (_key == 0x32)
+		{
+			lei=5;
+
+		}
+		if (_key == 0x33)
+		{
+			lei=6;
+
+		}
+		if (_key == 0x41)
+		{
+			lei=7;
+
+		}
+		if (_key == 0x42)
+		{
+			lei=8;
+
+		}
+		if(_key==0x43)
+		{
+		     lei=9;
+		
+		}
+		if (bz==1)
+		{
+			
+			display();
+			ledtime(lei);
+		}
+	}
+}
+
+/*void Time0() interrupt 1
+{
+	TH0 = (65536 - 50000) / 256;          //初始化
+	TL0 = (65536 - 50000) % 256;
+	 jishu2 = jishu2 + 1;
+	if (jishu2 == 20)
+	{
+		jishu2 = 0;
+		lei=lei;
+		}
+}
+*/
+
+		
+
+ 
